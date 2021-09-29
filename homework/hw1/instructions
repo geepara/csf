@@ -1,0 +1,18 @@
+Build program:
+
+  make
+
+Run using:
+
+  ./fixedpoint_tests
+
+A minimum expectation of unit tests is that all public functions are tested. So, make sure that all of the functions declared in fixedpoint.h are tested.
+
+We recommend that you use two uint64_t values in the representation of Fixedpoint, one to represent the whole part, and one to represent the fractional part.
+
+Note that you will also need to store a “tag” that keeps track of whether the Fixedpoint value is valid/non-negative, valid/negative, an error value, an positive or negative overflow value, or a positive or negative underflow value.
+
+valgrind --leak-check=full ./fixedpoint_tests
+
+gdb ./fixedpoint_tests
+

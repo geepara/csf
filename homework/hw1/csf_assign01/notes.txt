@@ -1,0 +1,54 @@
+Methods:
+
+fixedpoint_create(whole)            done
+fixedpoint_create2(whole, frac)     done
+fixedpoint_create_from_hex(hex)     write more
+fixedpoint_whole_part(val)          done    
+fixedpoint_frac_part(val)           done
+fixedpoint_add(left, right)         check comprehensiveness
+fixedpoint_sub(left, right)         check comprehensiveness
+fixedpoint_negate(val)              done
+fixedpoint_halve(val)               none
+fixedpoint_double(val)              none
+fixedpoint_compare(left, right)     none
+fixedpoint_is_zero(val)             done
+fixedpoint_is_err(val)              check comprehensiveness
+fixedpoint_is_neg(val)              none
+fixedpoint_is_overflow_neg(val)     none
+fixedpoint_is_overflow_pos(val)     done
+fixedpoint_is_underflow_neg(val)    none
+fixedpoint_is_underflow_pos(val)    none
+fixedpoint_is_valid(val)            none
+fixedpoint_format_as_hex(val)       check comprehensiveness
+
+Test ideas:
+fixedpoint_double needs to check for overflow
+
+fixedpoint_compare
+// left > right, left is + and right is +
+// 2 : 1
+// left > right, left is + and right is -
+// 2 : -1
+// left > right, left is - and right is +
+// -2 : 1
+// left > right, left is - and right is -
+// -2 : -1
+
+// right > left, left is + and right is +
+// 1 : 2
+// right > left, left is + and right is -
+// 1 : -2
+// right > left, left is - and right is +
+// -1 : 2
+// right > left, left is - and right is -
+// -1 : -2
+
+// 1.2 : 1.1
+// 1.2 : -1.1
+// -1.2 : 1.1
+// -1.2 : -1.1
+
+// 1.1 : 1.2
+// 1.1 : -1.2
+// -1.1 : 1.2
+// -1.1 : -1.2
