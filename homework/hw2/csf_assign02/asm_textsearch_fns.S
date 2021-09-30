@@ -61,16 +61,67 @@ read_line:
 
 /* implementation of find_string_length function */
 
+	.globl count_occurrences
+count_occurrences:
+	subq $8, %rsp /* align stack pointer */
+	pushq %r12 /* preserve value of callee-saved register */
+	pushq %r13 /* preserve value of callee-saved register */
+	movq $0, %rax /* set return value to 0 */
+	cmp $0, %rdi /* check if 1st argument is null */
+	je .LcountOccurrencesReturn /* if so, return 0 */
+	cmp $0, %rsi /* check if 2nd argument is null */
+	je .LcountOccurrencesReturn /* if so, return 0 */
+
+	pushq %rdi /* preserve value of 1st argument */
+	pushq %rsi /* preserve value of 2nd argument */
+	call find_string_length /* get the length of 1st arg */
+	movq %rax, %r12 /* store the length of 1st arg in r12 */
+	popq %rdi /* restore value of 1st argument */
+	popq %rsi /* restore value of 2nd argument */
+
+	pushq %rdi /* preserve value of 1st argument */
+	movq %rsi, %rdi /* move 2nd arg into position of 1st arg */
+	pushq %rsi /* preserve value of 2nd argument */
+	call find_string_length /* get the length of 2nd arg */
+	movq %rax, %r13 /* store the length of 2nd arg in r13 */
+	popq %rsi /* restore value of 1st argument */
+	popq %rdi /* restore value of 2nd argument */
+
+	movq $0, %rax /* set return value to 0 */
+	cmp $0, %r13 /* check if size of 2nd arg is 0 */
+	je .LcountOccurrencesReturn /* if so, return 0 */
+
+	movq %r12, %r10 /* copy size of 1st arg into r10 */
+	subq %r10, %r13 /* len(1st arg) - len(2nd arg) */
+	movq $0, %r10 /* set counter i to 0 */
+
+.LcountOccurencesLoop1Condition:
+	cmp %r10, %r10 /* check if counter < len(1st arg) - len(2nd arg) */
+	jge .LcountOccurrencesReturn
+	movq $0, %r11
+
+.LcountOccurencesLoop2Condition
+	
+
+
+.LcountOccurrencesReturn:
+	popq %r13
+	popq %r12
+	addq $8, %rsp
+	ret
+
+/* implementation of find_string_length function */
+
 	.globl find_string_length
 find_string_length:
 	subq $8, %rsp
 	movq $0, %rax
-	cmp $0, (%rdi)
+	cmp $0, %rdi
 	jz .LfindStringLengthReturn
 
 .LfindStringLengthLoopCondition:
-	cmp $0, (%rdi)
-	jz .LfindStringLengthReturn
+	cmpb $0, (%rdi)
+	je .LfindStringLengthReturn
 
 .LfindStringLengthLoop:
 	inc %rax
