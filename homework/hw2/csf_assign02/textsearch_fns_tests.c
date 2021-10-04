@@ -18,7 +18,7 @@ void cleanup(TestObjs *objs);
 // TODO: declare test functions
 
 void test_read_line(TestObjs *objs);
-// void test_count_occurences(TestObjs *objs);
+void test_count_occurences(TestObjs *objs);
 void test_find_string_length(TestObjs *objs);
 // void test_starts_with(TestObjs *objs);
 // void test_strings_equal(TestObjs *objs);
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
   TEST_INIT();
 
   TEST(test_read_line);
-  // TEST(test_count_occurences);
+  TEST(test_count_occurences);
   TEST(test_find_string_length);
   // TEST(test_starts_with);
   // TEST(test_strings_equal);
@@ -117,30 +117,30 @@ void test_read_line(TestObjs *objs)
 
 // TODO: implementations of other test functions
 
-// void test_count_occurences(TestObjs *objs)
-// {
-//   ASSERT(3 == count_occurrences(objs->yes3times, "yes"));
+void test_count_occurences(TestObjs *objs)
+{
+  ASSERT(3 == count_occurrences(objs->yes3times, "yes"));
 
-//   ASSERT(0 == count_occurrences(objs->yes3times, "no"));
+  ASSERT(0 == count_occurrences(objs->yes3times, "no"));
 
-//   ASSERT(3 == count_occurrences(objs->a5times, "aaa"));
+  ASSERT(3 == count_occurrences(objs->a5times, "aaa"));
 
-//   ASSERT(2 == count_occurrences(objs->pandp, "truth"));
+  ASSERT(2 == count_occurrences(objs->pandp, "truth"));
 
-//   ASSERT(8 == count_occurrences(objs->pandp, "in"));
+  ASSERT(8 == count_occurrences(objs->pandp, "in"));
 
-//   ASSERT(1 == count_occurrences(objs->pandp, "daughters."));
+  ASSERT(1 == count_occurrences(objs->pandp, "daughters."));
 
-//   ASSERT(1 == count_occurrences(objs->pandp, "it"));
+  ASSERT(1 == count_occurrences(objs->pandp, "it"));
 
-//   ASSERT(0 == count_occurrences(objs->pandp, "dsahpsfuihaepai"));
+  ASSERT(0 == count_occurrences(objs->pandp, "dsahpsfuihaepai"));
 
-//   ASSERT(0 == count_occurrences(objs->pandp, ""));
+  ASSERT(0 == count_occurrences(objs->pandp, ""));
 
-//   ASSERT(0 == count_occurrences(NULL, "yes"));
+  ASSERT(0 == count_occurrences(NULL, "yes"));
 
-//   ASSERT(0 == count_occurrences(objs->yes3times, NULL));
-// }
+  ASSERT(0 == count_occurrences(objs->yes3times, NULL));
+}
 
 void test_find_string_length(TestObjs *objs)
 {

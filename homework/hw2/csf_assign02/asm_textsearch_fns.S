@@ -63,22 +63,27 @@ read_line:
 
 	.globl count_occurrences
 count_occurrences:
-	subq $8, %rsp /* align stack pointer */
+	subq $16, %rsp /* align stack pointer */
 	pushq %r12 /* preserve value of callee-saved register */
 	pushq %r13 /* preserve value of callee-saved register */
+	pushq %r14 /* preserve value of callee-saved register */
+	
+	/* check if line == NULL || str == NULL */
 	movq $0, %rax /* set return value to 0 */
 	cmp $0, %rdi /* check if 1st argument is null */
 	je .LcountOccurrencesReturn /* if so, return 0 */
 	cmp $0, %rsi /* check if 2nd argument is null */
 	je .LcountOccurrencesReturn /* if so, return 0 */
 
+	/* find_string_length(line) */
 	pushq %rdi /* preserve value of 1st argument */
 	pushq %rsi /* preserve value of 2nd argument */
 	call find_string_length /* get the length of 1st arg */
 	movq %rax, %r12 /* store the length of 1st arg in r12 */
-	popq %rdi /* restore value of 1st argument */
 	popq %rsi /* restore value of 2nd argument */
+	popq %rdi /* restore value of 1st argument */
 
+	/* find_string_length(str) */
 	pushq %rdi /* preserve value of 1st argument */
 	movq %rsi, %rdi /* move 2nd arg into position of 1st arg */
 	pushq %rsi /* preserve value of 2nd argument */
@@ -91,23 +96,46 @@ count_occurrences:
 	cmp $0, %r13 /* check if size of 2nd arg is 0 */
 	je .LcountOccurrencesReturn /* if so, return 0 */
 
-	movq %r12, %r10 /* copy size of 1st arg into r10 */
-	subq %r10, %r13 /* len(1st arg) - len(2nd arg) */
+	subq %r13, %r12 /* len(1st arg) - len(2nd arg) */
 	movq $0, %r10 /* set counter i to 0 */
 
-.LcountOccurencesLoop1Condition:
-	cmp %r10, %r10 /* check if counter < len(1st arg) - len(2nd arg) */
-	jge .LcountOccurrencesReturn
-	movq $0, %r11
+.LcountOccurrencesLoop1Condition:
+	cmp %r10, %r12 /* check if end of "line" was reached */
+	jz .LcountOccurrencesReturn /* if so, exit loop */
 
-.LcountOccurencesLoop2Condition
-	
+	movq $0, %r11 /* 2nd loop counter set to 0 */
+	pushq %rdi /* preserve position in line */
+	pushq %rsi /* preserve position in str */
 
+.LcountOccurrencesLoop2Condition:
+	cmp %r11, %r13 /* check if end of str was reached */
+	jz .LcountOccurrencesLoop2Match /* if so, there was a match */
+
+.LcountOccurrencesLoop2:
+	movq %rdi, %r14
+	cmp %r14, (%rsi) /* compare char of line to str */
+	jne .LcountOccurrencesLoop2Exit /* if they don't match, exit the loop */
+	incq %rdi /* increment line pointer */
+	incq %rsi /* increment str pointer */
+	inc %r11 /* increment 2nd loop counter */
+	jmp .LcountOccurrencesLoop2Condition
+
+.LcountOccurrencesLoop2Exit:
+	popq %rsi
+	popq %rdi
+	incq %rdi
+	inc %r10
+	jmp .LcountOccurrencesLoop1Condition
+
+.LcountOccurrencesLoop2Match:
+	inc %rax
+	jmp .LcountOccurrencesLoop2Exit
 
 .LcountOccurrencesReturn:
+	popq %r14 /* preserve value of callee-saved register */
 	popq %r13
 	popq %r12
-	addq $8, %rsp
+	addq $16, %rsp
 	ret
 
 /* implementation of find_string_length function */
@@ -129,5 +157,97 @@ find_string_length:
 	jmp .LfindStringLengthLoopCondition
 
 .LfindStringLengthReturn:
+	addq $8, %rsp
+	ret
+
+/* implementation of find_string_length function */
+
+	.globl starts_with
+starts_with:
+	subq $8, %rsp
+	
+	cmp $0, %rdi
+	jz .LstartsWithReturn0
+	cmp $0, %rsi
+	jz .LstartsWithReturn0
+
+	pushq %rdi
+	pushq %rsi
+	movq %rsi, %rdi
+	call find_string_length
+	movq %rax, %r10
+	popq %rsi
+	popq %rdi
+
+	cmp $0, %r10
+	jz .LstartsWithReturn0
+
+	movq $0, %r11
+
+.LstartsWithLoopCondition:
+	cmp %r11, %r10
+	jz .LstartsWithReturn1
+
+.LstartsWithLoop:
+	cmp (%rdi), (%rsi)
+	jne .LstartsWithReturn0
+	incq %rdi
+	incq %rsi
+	inc %r11
+	jmp .LstartsWithLoopCondition
+
+.LstartsWithReturn1:
+	movq $1, %rax
+	addq $8, %rsp
+	ret
+
+.LstartsWithReturn0:
+	movq $0, %rax
+	addq $8, %rsp
+	ret
+
+/* implementation of strings_equal function */
+
+	.globl strings_equal
+strings_equal:
+	subq $8, %rsp
+	movq $0, %rax
+	cmp $0, %rdi
+	jz .LstringsEqualReturn0
+	cmp $0, %rsi
+	jz .LstringsEqualReturn0
+
+	pushq %rdi
+	pushq %rsi
+	call find_string_length
+	movq %rax, %r10
+	popq %rsi
+	popq %rdi
+
+	pushq %rdi
+	pushq %rsi
+	movq %rsi, %rdi
+	call find_string_length
+	popq %rsi
+	popq %rdi
+
+	cmp %r10, %rax
+	jne .LstringsEqualReturn0
+
+	movq $0, %r11
+
+.LstringsEqualLoopCondition:
+	cmp %r11, %r10
+	jz .LstringsEqualReturn1
+
+.LstringsEqualLoop:
+
+.LstringsEqualReturn0:
+	movq $0, %rax
+	addq $8, %rsp
+	ret
+
+.LstringsEqualReturn1:
+	movq $1, %rax
 	addq $8, %rsp
 	ret
