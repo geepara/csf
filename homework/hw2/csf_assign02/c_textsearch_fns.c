@@ -118,49 +118,4 @@ int strings_equal(const char *s1, const char *s2)
   return match;
 }
 
-FILE *get_file(char **argv, int cArg)
-{
-  FILE *in;
-  if (!cArg)
-  {
-    in = fopen(argv[2], "r");
-  }
-  else
-  {
-    in = fopen(argv[3], "r");
-  }
-  return in;
-}
-
-char *get_target_str(char **argv, int cArg)
-{
-  if (!cArg)
-  {
-    return argv[1];
-  }
-  return argv[2];
-}
-
-void c_textsearch(FILE *in, char *targetStr, int cArg)
-{
-  char line[MAXLINE];
-  unsigned occurrences = 0;
-  while (read_line(in, line))
-  {
-    unsigned lineOccurrences = count_occurrences((char *)line, targetStr);
-    occurrences += lineOccurrences;
-    if (lineOccurrences > 0)
-    {
-      if (!cArg)
-      {
-        printf("%s\n", (char *)line);
-      }
-    }
-  }
-  if (cArg)
-  {
-    printf("%d occurrence(s)\n", occurrences);
-  }
-}
-
 // TODO: implement functions declared in textsearch_fns.h

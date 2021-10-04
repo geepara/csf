@@ -16,16 +16,49 @@ int main(int argc, char **argv)
     cArg = 1;
   }
 
-  FILE *in = get_file(argv, cArg);
-  char *targetStr = get_target_str(argv, cArg);
-
+  FILE *in;
+  if (!cArg)
+  {
+    in = fopen(argv[2], "r");
+  }
+  else
+  {
+    in = fopen(argv[3], "r");
+  }
   if (in == NULL)
   {
     fprintf(stderr, "Could not open file\n");
     return 1;
   }
 
-  c_textsearch(in, targetStr, cArg);
+  char *targetStr;
+  if (!cArg)
+  {
+    targetStr = argv[1];
+  }
+  else
+  {
+    targetStr = argv[2];
+  }
+
+  char line[MAXLINE];
+  unsigned occurrences = 0;
+  while (read_line(in, line))
+  {
+    unsigned lineOccurrences = count_occurrences((char *)line, targetStr);
+    occurrences += lineOccurrences;
+    if (lineOccurrences > 0)
+    {
+      if (!cArg)
+      {
+        printf("%s\n", (char *)line);
+      }
+    }
+  }
+  if (cArg)
+  {
+    printf("%d occurrence(s)\n", occurrences);
+  }
 
   return 0;
 }
