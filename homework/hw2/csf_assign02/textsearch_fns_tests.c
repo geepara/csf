@@ -20,8 +20,8 @@ void cleanup(TestObjs *objs);
 void test_read_line(TestObjs *objs);
 void test_count_occurences(TestObjs *objs);
 void test_find_string_length(TestObjs *objs);
-// void test_starts_with(TestObjs *objs);
-// void test_strings_equal(TestObjs *objs);
+void test_starts_with(TestObjs *objs);
+void test_strings_equal(TestObjs *objs);
 
 // Example:
 // void test_read_line(TestObjs *objs);
@@ -40,8 +40,8 @@ int main(int argc, char **argv)
   TEST(test_read_line);
   TEST(test_count_occurences);
   TEST(test_find_string_length);
-  // TEST(test_starts_with);
-  // TEST(test_strings_equal);
+  TEST(test_starts_with);
+  TEST(test_strings_equal);
 
   // TODO: invoke test functions
   // TEST(test_read_line);
@@ -153,55 +153,55 @@ void test_find_string_length(TestObjs *objs)
   ASSERT(0 == find_string_length(NULL));
 }
 
-// void test_starts_with(TestObjs *objs)
-// {
-//   ASSERT(1 == starts_with(objs->yes3times, "yes"));
+void test_starts_with(TestObjs *objs)
+{
+  ASSERT(1 == starts_with(objs->yes3times, "yes"));
 
-//   ASSERT(1 == starts_with(objs->a5times, "aaa"));
+  ASSERT(1 == starts_with(objs->a5times, "aaa"));
 
-//   ASSERT(1 == starts_with(objs->pandp, "It"));
+  ASSERT(1 == starts_with(objs->pandp, "It"));
 
-//   ASSERT(1 == starts_with(objs->yes3times, "yesyesyes"));
+  ASSERT(1 == starts_with(objs->yes3times, "yesyesyes"));
 
-//   ASSERT(0 == starts_with(objs->yes3times, "no"));
+  ASSERT(0 == starts_with(objs->yes3times, "no"));
 
-//   ASSERT(1 == starts_with(objs->pandp,
-//                           "It is a truth universally acknowledged, that a single man in\n"
-//                           "possession of a good fortune, must be in want of a wife.\n"
-//                           "\n"
-//                           "However little known the feelings or views of such a man may be\n"
-//                           "on his first entering a neighbourhood, this truth is so well\n"
-//                           "fixed in the minds of the surrounding families, that he is\n"
-//                           "considered as the rightful property of some one or other of their\n"));
+  ASSERT(1 == starts_with(objs->pandp,
+                          "It is a truth universally acknowledged, that a single man in\n"
+                          "possession of a good fortune, must be in want of a wife.\n"
+                          "\n"
+                          "However little known the feelings or views of such a man may be\n"
+                          "on his first entering a neighbourhood, this truth is so well\n"
+                          "fixed in the minds of the surrounding families, that he is\n"
+                          "considered as the rightful property of some one or other of their\n"));
 
-//   ASSERT(0 == starts_with(objs->nullTerminators, "\0"));
+  ASSERT(0 == starts_with(objs->nullTerminators, "\0"));
 
-//   ASSERT(0 == starts_with(objs->a5times, "AAA"));
+  ASSERT(0 == starts_with(objs->a5times, "AAA"));
 
-//   ASSERT(0 == starts_with(objs->pandp, ""));
+  ASSERT(0 == starts_with(objs->pandp, ""));
 
-//   ASSERT(0 == starts_with(NULL, "yes"));
+  ASSERT(0 == starts_with(NULL, "yes"));
 
-//   ASSERT(0 == starts_with(objs->yes3times, NULL));
-// }
+  ASSERT(0 == starts_with(objs->yes3times, NULL));
+}
 
-// void test_strings_equal(TestObjs *objs)
-// {
-//   ASSERT(1 == strings_equal(objs->yes3times, "yesyesyes"));
+void test_strings_equal(TestObjs *objs)
+{
+  ASSERT(1 == strings_equal(objs->yes3times, "yesyesyes"));
 
-//   ASSERT(0 == strings_equal(objs->yes3times, "nonono"));
+  ASSERT(0 == strings_equal(objs->yes3times, "nonono"));
 
-//   ASSERT(0 == strings_equal(objs->yes3times, "nesyesyes"));
+  ASSERT(0 == strings_equal(objs->yes3times, "nesyesyes"));
 
-//   ASSERT(0 == strings_equal(objs->yes3times, "yesyesyen"));
+  ASSERT(0 == strings_equal(objs->yes3times, "yesyesyen"));
 
-//   ASSERT(1 == strings_equal(objs->a5times, "aaaaa"));
+  ASSERT(1 == strings_equal(objs->a5times, "aaaaa"));
 
-//   ASSERT(0 == strings_equal(objs->a5times, "AAAAA"));
+  ASSERT(0 == strings_equal(objs->a5times, "AAAAA"));
 
-//   ASSERT(0 == strings_equal(objs->a5times, "aaaa"));
+  ASSERT(0 == strings_equal(objs->a5times, "aaaa"));
 
-//   ASSERT(0 == strings_equal(NULL, "yes"));
+  ASSERT(0 == strings_equal(NULL, "yes"));
 
-//   ASSERT(0 == strings_equal(objs->yes3times, NULL));
-// }
+  ASSERT(0 == strings_equal(objs->yes3times, NULL));
+}

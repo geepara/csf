@@ -63,10 +63,11 @@ read_line:
 
 	.globl count_occurrences
 count_occurrences:
-	subq $16, %rsp /* align stack pointer */
+	subq $8, %rsp /* align stack pointer */
 	pushq %r12 /* preserve value of callee-saved register */
 	pushq %r13 /* preserve value of callee-saved register */
 	pushq %r14 /* preserve value of callee-saved register */
+	pushq %r15 /* preserve value of callee-saved register */
 	
 	/* check if line == NULL || str == NULL */
 	movq $0, %rax /* set return value to 0 */
@@ -96,7 +97,8 @@ count_occurrences:
 	cmp $0, %r13 /* check if size of 2nd arg is 0 */
 	je .LcountOccurrencesReturn /* if so, return 0 */
 
-	subq %r13, %r12 /* len(1st arg) - len(2nd arg) */
+	subq %r13, %r12 /* len(1st arg) - len(2nd arg) + 1*/
+	addq $1, %r12
 	movq $0, %r10 /* set counter i to 0 */
 
 .LcountOccurrencesLoop1Condition:
@@ -112,8 +114,9 @@ count_occurrences:
 	jz .LcountOccurrencesLoop2Match /* if so, there was a match */
 
 .LcountOccurrencesLoop2:
-	movq %rdi, %r14
-	cmp %r14, (%rsi) /* compare char of line to str */
+	movb (%rdi), %r14b
+	movb (%rsi), %r15b
+	cmpb %r14b, %r15b /* compare char of line to str */
 	jne .LcountOccurrencesLoop2Exit /* if they don't match, exit the loop */
 	incq %rdi /* increment line pointer */
 	incq %rsi /* increment str pointer */
@@ -132,10 +135,11 @@ count_occurrences:
 	jmp .LcountOccurrencesLoop2Exit
 
 .LcountOccurrencesReturn:
+	popq %r15 /* preserve value of callee-saved register */
 	popq %r14 /* preserve value of callee-saved register */
 	popq %r13
 	popq %r12
-	addq $16, %rsp
+	addq $8, %rsp
 	ret
 
 /* implementation of find_string_length function */
@@ -160,11 +164,13 @@ find_string_length:
 	addq $8, %rsp
 	ret
 
-/* implementation of find_string_length function */
+/* implementation of starts_with function */
 
 	.globl starts_with
 starts_with:
 	subq $8, %rsp
+	pushq %r12
+	pushq %r13
 	
 	cmp $0, %rdi
 	jz .LstartsWithReturn0
@@ -189,7 +195,9 @@ starts_with:
 	jz .LstartsWithReturn1
 
 .LstartsWithLoop:
-	cmp (%rdi), (%rsi)
+	movb (%rdi), %r12b
+	movb (%rsi), %r13b
+	cmpb %r12b, %r13b
 	jne .LstartsWithReturn0
 	incq %rdi
 	incq %rsi
@@ -198,11 +206,14 @@ starts_with:
 
 .LstartsWithReturn1:
 	movq $1, %rax
-	addq $8, %rsp
-	ret
+	jmp .LstartsWithReturn	
 
 .LstartsWithReturn0:
 	movq $0, %rax
+
+.LstartsWithReturn:
+	popq %r13
+	popq %r12
 	addq $8, %rsp
 	ret
 
@@ -211,7 +222,9 @@ starts_with:
 	.globl strings_equal
 strings_equal:
 	subq $8, %rsp
-	movq $0, %rax
+	pushq %r12
+	pushq %r13
+
 	cmp $0, %rdi
 	jz .LstringsEqualReturn0
 	cmp $0, %rsi
@@ -241,13 +254,24 @@ strings_equal:
 	jz .LstringsEqualReturn1
 
 .LstringsEqualLoop:
+	movb (%rdi), %r12b
+	movb (%rsi), %r13b
+	cmpb %r12b, %r13b
+	jne .LstringsEqualReturn0
+	incq %rdi
+	incq %rsi
+	inc %r11
+	jmp .LstringsEqualLoopCondition
 
 .LstringsEqualReturn0:
 	movq $0, %rax
-	addq $8, %rsp
-	ret
+	jmp .LstringsEqualReturn
 
 .LstringsEqualReturn1:
 	movq $1, %rax
+
+.LstringsEqualReturn:
+	popq %r13
+	popq %r12
 	addq $8, %rsp
 	ret
