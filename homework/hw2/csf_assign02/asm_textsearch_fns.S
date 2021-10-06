@@ -124,74 +124,74 @@ count_occurrences:
 	jmp .LcountOccurrencesLoop2Condition
 
 .LcountOccurrencesLoop2Exit:
-	popq %rsi
-	popq %rdi
-	incq %rdi
-	inc %r10
-	jmp .LcountOccurrencesLoop1Condition
+	popq %rsi /* restore value of line pointer */
+	popq %rdi /* restore value of str pointer */
+	incq %rdi /* progress through line */
+	inc %r10 /* increment loop counter */
+	jmp .LcountOccurrencesLoop1Condition /* iterate again */
 
 .LcountOccurrencesLoop2Match:
-	inc %rax
-	jmp .LcountOccurrencesLoop2Exit
+	inc %rax /* occurrence found, increment counter */
+	jmp .LcountOccurrencesLoop2Exit /* continue with loop */
 
 .LcountOccurrencesReturn:
 	popq %r15 /* preserve value of callee-saved register */
 	popq %r14 /* preserve value of callee-saved register */
-	popq %r13
-	popq %r12
-	addq $8, %rsp
+	popq %r13 /* preserve value of callee-saved register */ 
+	popq %r12 /* preserve value of callee-saved register */ 
+	addq $8, %rsp /* align stack pointer */
 	ret
 
 /* implementation of find_string_length function */
 
 	.globl find_string_length
 find_string_length:
-	subq $8, %rsp
-	movq $0, %rax
-	cmp $0, %rdi
-	jz .LfindStringLengthReturn
+	subq $8, %rsp /* align stack pointer */
+	movq $0, %rax /* set 0 as return value */
+	cmp $0, %rdi /* check if string is null */
+	jz .LfindStringLengthReturn /* if so, return 0 */
 
 .LfindStringLengthLoopCondition:
-	cmpb $0, (%rdi)
-	je .LfindStringLengthReturn
+	cmpb $0, (%rdi) /* check if null terminator reached */
+	je .LfindStringLengthReturn /* if so, return string length */
 
 .LfindStringLengthLoop:
-	inc %rax
-	incq %rdi
-	jmp .LfindStringLengthLoopCondition
+	inc %rax /* increment string length counter */
+	incq %rdi /* progress through string */
+	jmp .LfindStringLengthLoopCondition /* iterate again */
 
 .LfindStringLengthReturn:
-	addq $8, %rsp
+	addq $8, %rsp /* align stack pointer */
 	ret
 
 /* implementation of starts_with function */
 
 	.globl starts_with
 starts_with:
-	subq $8, %rsp
-	pushq %r12
-	pushq %r13
+	subq $8, %rsp /* align stack pointer */
+	pushq %r12 /* preserve callee-saved register */
+	pushq %r13 /* presrve callee-saved register */
 	
-	cmp $0, %rdi
-	jz .LstartsWithReturn0
-	cmp $0, %rsi
-	jz .LstartsWithReturn0
+	cmp $0, %rdi /* check if string is null */
+	jz .LstartsWithReturn0 /* if so, return 0 */
+	cmp $0, %rsi /* check if prefix is null */
+	jz .LstartsWithReturn0 /* if so, return 0 */
 
-	pushq %rdi
-	pushq %rsi
-	movq %rsi, %rdi
-	call find_string_length
-	movq %rax, %r10
-	popq %rsi
-	popq %rdi
+	pushq %rdi /* preserve value of 1st arg */
+	pushq %rsi /* preserve value of 2nd arg */
+	movq %rsi, %rdi /* move 2nd arg in 1st arg position */
+	call find_string_length /* get string length of prefix */
+	movq %rax, %r10 /* store size of prefix in r10 */
+	popq %rsi /* restore value of 2nd arg */
+	popq %rdi /* restore value of 1st arg */
 
-	cmp $0, %r10
-	jz .LstartsWithReturn0
+	cmp $0, %r10 /* check if size of prefix is zero */
+	jz .LstartsWithReturn0 /* if so, return 0 */
 
-	movq $0, %r11
+	movq $0, %r11 /* set loop counter to 0 */
 
 .LstartsWithLoopCondition:
-	cmp %r11, %r10
+	cmp %r11, %r10 /* check if end of  */
 	jz .LstartsWithReturn1
 
 .LstartsWithLoop:
