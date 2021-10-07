@@ -21,51 +21,15 @@ int main(int argc, char **argv)
     }
   }
 
-  FILE *in;
-  if (!cArg)
-  {
-    in = fopen(argv[2], "r");
-  }
-  else
-  {
-    in = fopen(argv[3], "r");
-  }
+  char *targetStr = get_target_str(argv, cArg);
+  FILE *in = get_file(argv, cArg);
   if (in == NULL)
   {
     fprintf(stderr, "Could not open file\n");
     return 1;
   }
 
-  char *targetStr;
-  if (!cArg)
-  {
-    targetStr = argv[1];
-  }
-  else
-  {
-    targetStr = argv[2];
-  }
-
-  char line[MAXLINE];
-  unsigned occurrences = 0;
-  while (read_line(in, line))
-  {
-    unsigned lineOccurrences = count_occurrences((char *)line, targetStr);
-    occurrences += lineOccurrences;
-    if (lineOccurrences > 0)
-    {
-      if (!cArg)
-      {
-        printf("%s\n", (char *)line);
-      }
-    }
-  }
-  if (cArg)
-  {
-    printf("%d occurrence(s)\n", occurrences);
-  }
-
-  fclose(in);
+  c_textsearch(in, targetStr, cArg);
 
   return 0;
 }
