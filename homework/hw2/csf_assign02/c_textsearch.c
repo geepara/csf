@@ -14,7 +14,7 @@ int main(int argc, char **argv)
   if (strings_equal(argv[1], "-c") == 1)
   {
     cArg = 1;
-    if (argc > 3)
+    if (argc > 4)
     {
       fprintf(stderr, "Invalid arguments\n");
       return 1;

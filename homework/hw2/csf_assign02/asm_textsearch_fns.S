@@ -45,8 +45,8 @@ read_line:
 	test %eax, %eax /* check if last c was EOF */
 	js .LreadLineReturn0 /* if it is, return 0 */
 	movq $1, %rax /* otherwise, return 1 */
-	popq %r12 /* restore value of callee-saved register */
 	popq %r13 /* restore value of callee-saved register */
+	popq %r12 /* restore value of callee-saved register */
 
 	addq $8, %rsp /* align stack pointer */
 	ret
@@ -80,58 +80,60 @@ count_occurrences:
 	pushq %rdi /* preserve value of 1st argument */
 	pushq %rsi /* preserve value of 2nd argument */
 	call find_string_length /* get the length of 1st arg */
-	movq %rax, %r12 /* store the length of 1st arg in r12 */
+	movl %eax, %r12d /* store the length of 1st arg in r12 */
 	popq %rsi /* restore value of 2nd argument */
 	popq %rdi /* restore value of 1st argument */
 
 	/* find_string_length(str) */
 	pushq %rdi /* preserve value of 1st argument */
-	movq %rsi, %rdi /* move 2nd arg into position of 1st arg */
 	pushq %rsi /* preserve value of 2nd argument */
+	movq %rsi, %rdi /* move 2nd arg into position of 1st arg */
 	call find_string_length /* get the length of 2nd arg */
-	movq %rax, %r13 /* store the length of 2nd arg in r13 */
-	popq %rsi /* restore value of 1st argument */
-	popq %rdi /* restore value of 2nd argument */
+	movl %eax, %r13d /* store the length of 2nd arg in r13 */
+	popq %rsi /* restore value of 2nd argument */
+	popq %rdi /* restore value of 1st argument */
 
-	movq $0, %rax /* set return value to 0 */
-	cmp $0, %r13 /* check if size of 2nd arg is 0 */
+	movl $0, %eax /* set return value to 0 */
+	cmpl $0, %r12d /* check if size of 1st arg is 0 */
+	je .LcountOccurrencesReturn /* if so, return 0 */
+	cmpl $0, %r13d /* check if size of 2nd arg is 0 */
 	je .LcountOccurrencesReturn /* if so, return 0 */
 
-	subq %r13, %r12 /* len(1st arg) - len(2nd arg) + 1*/
-	addq $1, %r12
-	movq $0, %r10 /* set counter i to 0 */
+	subl %r13d, %r12d /* len(1st arg) - len(2nd arg) + 1*/
+	addl $1, %r12d
+	movl $0, %r10d /* set counter i to 0 */
 
 .LcountOccurrencesLoop1Condition:
-	cmp %r10, %r12 /* check if end of "line" was reached */
+	cmpl %r10d, %r12d /* check if end of "line" was reached */
 	jz .LcountOccurrencesReturn /* if so, exit loop */
 
-	movq $0, %r11 /* 2nd loop counter set to 0 */
+	movl $0, %r11d /* 2nd loop counter set to 0 */
 	pushq %rdi /* preserve position in line */
 	pushq %rsi /* preserve position in str */
 
 .LcountOccurrencesLoop2Condition:
-	cmp %r11, %r13 /* check if end of str was reached */
+	cmpl %r11d, %r13d /* check if end of str was reached */
 	jz .LcountOccurrencesLoop2Match /* if so, there was a match */
 
 .LcountOccurrencesLoop2:
-	movb (%rdi), %r14b
-	movb (%rsi), %r15b
+	movb (%rdi), %r14b /* store char of line in r14b */
+	movb (%rsi), %r15b /* store char of str in r15b */
 	cmpb %r14b, %r15b /* compare char of line to str */
 	jne .LcountOccurrencesLoop2Exit /* if they don't match, exit the loop */
 	incq %rdi /* increment line pointer */
 	incq %rsi /* increment str pointer */
-	inc %r11 /* increment 2nd loop counter */
+	inc %r11d /* increment 2nd loop counter */
 	jmp .LcountOccurrencesLoop2Condition
 
 .LcountOccurrencesLoop2Exit:
 	popq %rsi /* restore value of line pointer */
 	popq %rdi /* restore value of str pointer */
 	incq %rdi /* progress through line */
-	inc %r10 /* increment loop counter */
+	inc %r10d /* increment loop counter */
 	jmp .LcountOccurrencesLoop1Condition /* iterate again */
 
 .LcountOccurrencesLoop2Match:
-	inc %rax /* occurrence found, increment counter */
+	inc %eax /* occurrence found, increment counter */
 	jmp .LcountOccurrencesLoop2Exit /* continue with loop */
 
 .LcountOccurrencesReturn:
