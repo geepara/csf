@@ -53,8 +53,8 @@ read_line:
 
 .LreadLineReturn0:
 	movq $0, %rax /* return 0 */
-	popq %r12 /* restore value of callee-saved register */
 	popq %r13 /* restore value of callee-saved register */
+	popq %r12 /* restore value of callee-saved register */
 
 	addq $8, %rsp /* align stack pointer */
 	ret

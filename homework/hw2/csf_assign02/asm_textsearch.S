@@ -41,16 +41,16 @@ main:
 	popq %rsi /* restore value of 2nd arg */
 	popq %rdi /* restore value of 1st arg */
 
-	movl $0, %r12d /* indicate "-c" wasn't used as a 0 in r12 (BY DEFAULT) */
+	movl $0, %r12d /* indicate "-c" wasnt used as a 0 in r12 (BY DEFAULT) */
 
-	cmpl $1, %eax /* check if argv[1] == "-c" */
-	jne .LmainOpenFileNoCFlag /* if not, open argv[2] as file */
+	cmpl $0, %eax /* check if argv[1] == "-c" */
+	je .LmainOpenFileNoCFlag /* if not, open argv[2] as file */
 	movl $1, %r12d /* if yes, indicate a 1 in r12 (referenced later) */
-	movq %rdi, %r10 /* preserve value of argc in r10 */
+	pushq %rsi
 	movq $sInvalidArgs, %rsi /* set up error message */
-	cmpl $4, %r10d /* check if argc > 4 */
+	cmpl $4, %edi /* check if argc > 4 */
 	jg .LmainReturn1 /* if so, return 1 */
-	movq %r10, %rdi /* restore value of argc */
+	popq %rsi
 
 .LmainOpenFileCFlag:
 	movq 24(%rsi), %rdi /* move argv[3] into 1st arg position */
@@ -67,17 +67,17 @@ main:
 	popq %rsi /* restore value of argv */
 
 .LmainCheckFile:
-	movq $sOpenFileError, %rsi /* set up error message. not preserving rdi bc no use for argc anymore */
+	movq $sOpenFileError, %rdi /* set up error message. not preserving rdi bc no use for argc anymore */
 	cmp $0, %r13 /* check if file pointer is null */
 	je .LmainReturn1 /* if so, return 1 */
 
 .LmainTargetStr:
 	cmpl $1, %r12d /* check if "-c" was used */
-	jne .LmainTargetStrCFlag /* if not, targetStr = argv[1] */
+	jne .LmainTargetStrNoCFlag /* if not, targetStr = argv[1] */
 	movq 16(%rsi), %r14 /* if yes, store argv[2] as targetStr in r14 */
 	jmp .LmainTextSearch /* go to text search */
 
-.LmainTargetStrCFlag:
+.LmainTargetStrNoCFlag:
 	movq 8(%rsi), %r14 /* store argv[1] as targetStr in r14 */
 
 .LmainTextSearch:
