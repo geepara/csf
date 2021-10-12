@@ -15,6 +15,8 @@ public:
   vector<Set *> sets;
 
   Cache(unsigned s, unsigned b, unsigned by);
+
+  void runSim();
 };
 
 #endif // CACHE_H

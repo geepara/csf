@@ -24,4 +24,8 @@ public:
       sets.push_back(new Set(this->numBlocks, this->numBytes));
     }
   }
+
+  void runSim()
+  {
+  }
 };
