@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  Cache *cache = new Cache(arguments->sets, arguments->blocks, arguments->bytes);
+  Cache *cache = new Cache(arguments->sets, arguments->blocks, arguments->bytes, arguments->writeAllocate, arguments->writeThrough, arguments->evictions);
   cache->runSim();
   return 0;
 }

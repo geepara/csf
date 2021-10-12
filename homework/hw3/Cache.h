@@ -12,9 +12,12 @@ public:
   unsigned numSets;
   unsigned numBlocks;
   unsigned numBytes;
+  unsigned writeAllocate;
+  unsigned writeThrough;
+  unsigned evictions;
   vector<Set *> sets;
 
-  Cache(unsigned s, unsigned b, unsigned by);
+  Cache(unsigned s, unsigned b, unsigned by, unsigned wA, unsigned wT, unsigned e);
 
   void runSim();
 };

@@ -12,6 +12,9 @@ public:
   unsigned blocks;
   unsigned bytes;
   unsigned error;
+  unsigned writeAllocate;
+  unsigned writeThrough;
+  unsigned evictions;
   string errorMsg;
 };
 
